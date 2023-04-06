@@ -38,7 +38,7 @@ fun HarryPotterNavHost(
         composable(route = MainScreenDestination.route) {
             MainScreen(
                 onItemClick = {
-                    navController.navigate("${DetailsScreenDestination.routeWithArgs}/${it}")
+                    navController.navigate("${DetailsScreenDestination.route}/${it}")
                 }
             )
         }

@@ -41,7 +41,7 @@ fun MainScreen(
 
     when(val mainScreenUiState = mainScreenViewModel.mainScreenUiState) {
         is MainScreenUiState.Loading -> LoadingScreen(modifier)
-        is MainScreenUiState.Success -> Characters(mainScreenUiState.characters, onItemClick = { onItemClick })
+        is MainScreenUiState.Success -> Characters(mainScreenUiState.characters, onItemClick = { onItemClick(it) })
         is MainScreenUiState.Error -> ErrorScreen(modifier)
     }
 }
