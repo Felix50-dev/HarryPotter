@@ -8,7 +8,7 @@ data class Character(
     val house: String,
     val image: String,
     //val wand: String,
-    val alternateNames: String,
+    val alternateNames: String? = "unknown",
     val actor: String
 )
 

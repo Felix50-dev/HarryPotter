@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.harrypotter.HarryPotterTopAppBar
 import com.example.harrypotter.R
 import com.example.harrypotter.data.models.Character
 import com.example.harrypotter.navigation.NavigationDestination
@@ -39,21 +41,41 @@ fun MainScreen(
     onItemClick: (String) -> Unit
 ) {
 
-    when(val mainScreenUiState = mainScreenViewModel.mainScreenUiState) {
+    when (val mainScreenUiState = mainScreenViewModel.mainScreenUiState) {
         is MainScreenUiState.Loading -> LoadingScreen(modifier)
-        is MainScreenUiState.Success -> Characters(mainScreenUiState.characters, onItemClick = { onItemClick(it) })
+        is MainScreenUiState.Success -> Characters(
+            mainScreenUiState.characters,
+            onItemClick = { onItemClick(it) })
         is MainScreenUiState.Error -> ErrorScreen(modifier)
     }
+
 }
 
 @Composable
-fun Characters(characters: List<Character>,onItemClick: (String) -> Unit, modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(characters) { character ->
-            CharacterItem(character = character, modifier = Modifier, onItemClick)
+fun Characters(
+    characters: List<Character>,
+    onItemClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Scaffold(
+        topBar = {
+            HarryPotterTopAppBar(
+                title = stringResource(MainScreenDestination.titleRes),
+                canNavigateBack = false
+            )
+        }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = modifier.fillMaxWidth().padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(characters) { character ->
+                CharacterItem(character = character, modifier = Modifier, onItemClick)
+            }
         }
     }
 }
+
 @Composable
 fun CharacterItem(
     character: Character,
@@ -138,12 +160,13 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
         Text(stringResource(R.string.loading_failed))
     }
 }
+
 @Preview
 @Composable
 fun MainScreenPreview() {
     HarryPotterTheme {
-        val mockData = List(10) { Character("", "", "","", "", "") }
-        //Characters(mockData)
+        val mockData = List(10) { Character("", "", "", "", "", "") }
+        Characters(mockData, {})
     }
 
 }

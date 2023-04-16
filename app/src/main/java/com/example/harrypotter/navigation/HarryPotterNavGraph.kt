@@ -6,21 +6,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.harrypotter.ui.mainscreen.DetailsScreen
 import com.example.harrypotter.ui.mainscreen.DetailsScreenDestination
 import com.example.harrypotter.ui.mainscreen.MainScreen
 import com.example.harrypotter.ui.mainscreen.MainScreenDestination
-
-
-/**
- * Top level composable that represents screens for the application.
- */
-@Composable
-fun HarryPotterApp(navController: NavHostController = rememberNavController()) {
-    HarryPotterNavHost(navController = navController)
-}
 
 /**
  * Provides Navigation graph for the application.
@@ -46,8 +36,9 @@ fun HarryPotterNavHost(
             route = DetailsScreenDestination.routeWithArgs,
             arguments = listOf(navArgument(DetailsScreenDestination.characterIdArg) {
                 type = NavType.StringType
-            })) {
-                DetailsScreen()
-            }
+            })
+        ) {
+            DetailsScreen(navigateBack = { navController.navigateUp() })
+        }
     }
 }

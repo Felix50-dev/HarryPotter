@@ -1,22 +1,27 @@
 package com.example.harrypotter.ui.mainscreen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.harrypotter.HarryPotterTopAppBar
 import com.example.harrypotter.R
 import com.example.harrypotter.data.models.Character
 import com.example.harrypotter.navigation.NavigationDestination
@@ -29,63 +34,86 @@ object DetailsScreenDestination : NavigationDestination {
 }
 
 @Composable
-fun DetailsScreen(detailsScreenViewModel: DetailsScreenViewModel = viewModel(factory = DetailsScreenViewModel.Factory)) {
+fun DetailsScreen(
+    modifier: Modifier = Modifier,
+    detailsScreenViewModel: DetailsScreenViewModel = viewModel(factory = DetailsScreenViewModel.Factory),
+    navigateBack: () -> Unit,
+) {
     val character = detailsScreenViewModel.character
-    DetailsScreenAppearance(character = character)
-}
 
-@Composable
-fun DetailsScreenAppearance(character: Character) {
-    CharacterImage(character)
-    CharacterDetails(name = character.name, house = character.house, alternateNames = character.alternateNames, wand = character.name, actor = character.actor)
-}
-
-@Composable
-fun CharacterImage(character: Character, modifier: Modifier = Modifier) {
-    AsyncImage(
-        model = ImageRequest.Builder(context = LocalContext.current)
-            .data(character.image)
-            .crossfade(true)
-            .build(),
-        error = painterResource(R.drawable.ic_broken_image),
-        alignment = Alignment.Center,
-        contentDescription = "image description",
-        modifier = modifier
-            .size(128.dp)
-            .clip(RoundedCornerShape(8.dp)),
-        contentScale = ContentScale.Crop
-    )
-}
-
-@Composable
-fun CharacterDetails(name: String, house: String, alternateNames: String, wand: String, actor: String) {
-    Column {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.subtitle1
-        )
-        Text(
-            text = house,
-            style = MaterialTheme.typography.subtitle1
-        )
-        Text(
-            text = alternateNames,
-            style = MaterialTheme.typography.subtitle1
-        )
-        Text(
-            text = wand,
-            style = MaterialTheme.typography.subtitle1
-        )
-        Text(
-            text = actor,
-            style = MaterialTheme.typography.subtitle1
-        )
+    Scaffold(
+        topBar = {
+            HarryPotterTopAppBar(
+                title = stringResource(DetailsScreenDestination.titleRes),
+                canNavigateBack = true,
+                navigateUp = navigateBack
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(character.image)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "image description",
+                modifier = modifier
+                    .clip(RoundedCornerShape(50))
+                    .size(150.dp)
+                    .padding(paddingValues = innerPadding),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = modifier.size(16.dp))
+            CharacterDetails(character)
+        }
     }
+
 }
 
-@Preview
 @Composable
-fun DetailsScreenPreview() {
-    val mockData = Character("","","","","","")
-    DetailsScreenAppearance(mockData)
+fun CharacterDetails(character: Character, modifier: Modifier = Modifier) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = character.name,
+            style = MaterialTheme.typography.h4,
+        )
+        Spacer(modifier = modifier.size(8.dp))
+        Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Icon(
+                Icons.Filled.Home,
+                contentDescription = "home",
+                tint = Color.Red,
+                modifier = modifier.align(Alignment.Bottom)
+            )
+            Spacer(modifier = modifier.size(8.dp))
+            Text(
+                text = character.house,
+                style = MaterialTheme.typography.h5
+            )
+        }
+        character.alternateNames?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.h6
+            )
+        }
+        Spacer(modifier = modifier.size(8.dp))
+        Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Icon(
+                Icons.Filled.Person,
+                contentDescription = "person",
+                tint = Color.Red,
+                modifier = modifier.align(Alignment.Bottom)
+            )
+            Spacer(modifier = modifier.size(8.dp))
+            Text(
+                text = character.actor,
+                style = MaterialTheme.typography.subtitle1
+            )
+        }
+    }
 }
